@@ -8,10 +8,13 @@
 import SwiftUI
 
 struct ContentView: View {
+    
+    private let container = AppDIContainer()
+    
     var body: some View {
         TabView {
             Tab("Home", systemImage: "house") {
-                HomeScreen()
+                HomeScreen(repository: container.userDetailsRepository)
             }
             
             Tab("Bluetooth", systemImage: "sensor.tag.radiowaves.forward") {

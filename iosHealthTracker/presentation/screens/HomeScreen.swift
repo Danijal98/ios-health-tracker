@@ -2,11 +2,11 @@ import SwiftUI
 
 struct HomeScreen: View {
     
-    @StateObject private var viewModel: HomeViewModel = HomeViewModel(
-        userDetailsRepository: UserDetailsRepositoryImpl(
-            userDetailsService: UserDetailsServiceImpl()
-        )
-    )
+    @StateObject private var viewModel: HomeViewModel
+    
+    init(repository: UserDetailsRepository) {
+        _viewModel = StateObject(wrappedValue: HomeViewModel(userDetailsRepository: repository))
+    }
     
     var body: some View {
         NavigationStack {
@@ -61,5 +61,5 @@ struct HomeScreen: View {
 }
 
 #Preview {
-    HomeScreen()
+    HomeScreen(repository: MockUserDetailsRepository())
 }
