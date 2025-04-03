@@ -2,37 +2,49 @@ import SwiftUI
 
 struct BluetoothScanningScreen: View {
     
-    @ObservedObject private var viewModel: BluetoothScanningViewModel = BluetoothScanningViewModel()
-    @ObservedObject var bluetoothManager = BluetoothManager()
+    @StateObject private var viewModel: BluetoothScanningViewModel
+    @ObservedObject private var bluetoothManager = BluetoothManager()
     
-    let sampleDevices: [BluetoothDevice] = [
-        BluetoothDevice(name: "Heart Monitor", address: "AA:BB:CC:DD:EE:01", signalStrength: -45),
-        BluetoothDevice(name: "Oximeter", address: "AA:BB:CC:DD:EE:02", signalStrength: -55),
-        BluetoothDevice(name: "Fitness Band", address: "AA:BB:CC:DD:EE:03", signalStrength: -60)
-    ]
+    init(repository: BluetoothRepository) {
+        _viewModel = StateObject(wrappedValue: BluetoothScanningViewModel(bluetoothRepository: repository))
+    }
     
     var body: some View {
         NavigationStack {
             VStack {
                 if bluetoothManager.isBluetoothEnabled {
-                    List(sampleDevices, id: \.address) { device in
-                        NavigationLink(value: Screen.bluetoothDataCollectionScreen(deviceAddress: device.address)) {
-                            ScannedDeviceCard(device: device)
+                    if let error = viewModel.state.error {
+                        switch error {
+                        case .scanningError:
+                            Text("Failed to scan for devices.")
+                                .frame(maxWidth: .infinity, alignment: .center)
+                        case .defaultError:
+                            Text("Unknown error occurred.")
+                                .frame(maxWidth: .infinity, alignment: .center)
                         }
-                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
-                        .listRowSeparator(.hidden)
+                    } else {
+                        List(viewModel.state.scannedDevices) { device in
+                            NavigationLink(destination: BluetoothDataCollectionScreen(deviceAddress: device.address)) {
+                                ScannedDeviceCard(device: device)
+                            }
+                            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                            .listRowSeparator(.hidden)
+                        }
+                        .listStyle(.plain)
                     }
-                    .listStyle(.plain)
                     
                     Button(action: {
-                        // TODO: start or stop scanning
+                        if viewModel.state.isScanning {
+                            viewModel.onEvent(.stopScanning)
+                        } else {
+                            viewModel.onEvent(.startScanning)
+                        }
                     }) {
-                        // TODO: start or stop scanning
-                        Text("Start scanning")
+                        Text(viewModel.state.isScanning ? "Stop Scanning" : "Start Scanning")
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(.borderedProminent)
-//                    .tint(viewModel.state.isScanning ? .red : .blue)
+                    .tint(viewModel.state.isScanning ? .red : .blue)
                 } else {
                     EnableBluetoothPromptView()
                 }
@@ -42,19 +54,14 @@ struct BluetoothScanningScreen: View {
                 _ = bluetoothManager
             }
             .onDisappear {
-                
+                viewModel.onEvent(.stopScanning)
             }
             .navigationTitle("Bluetooth Scanning")
             .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(for: Screen.self) { destination in
-                switch destination {
-                case .bluetoothDataCollectionScreen(let deviceAddress): BluetoothDataCollectionScreen(deviceAddress: deviceAddress)
-                }
-            }
         }
     }
 }
 
 #Preview {
-    BluetoothScanningScreen()
+    BluetoothScanningScreen(repository: MockBluetoothRepository())
 }

@@ -7,7 +7,8 @@
 
 import Foundation
 
-struct BluetoothDevice: Codable, Equatable {
+struct BluetoothDevice: Identifiable, Codable, Equatable {
+    var id: String { address }
     let name: String
     let address: String
     let signalStrength: Int

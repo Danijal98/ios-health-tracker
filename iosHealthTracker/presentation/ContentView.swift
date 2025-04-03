@@ -18,7 +18,7 @@ struct ContentView: View {
             }
             
             Tab("Bluetooth", systemImage: "sensor.tag.radiowaves.forward") {
-                BluetoothScanningScreen()
+                BluetoothScanningScreen(repository: container.bluetoothRepository)
             }
             
             Tab("History", systemImage: "list.bullet") {
