@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "signal_unavailable.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

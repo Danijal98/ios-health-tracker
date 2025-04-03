@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "oxygen-tank-svgrepo-com.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}
