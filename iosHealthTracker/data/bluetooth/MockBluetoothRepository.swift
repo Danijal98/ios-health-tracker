@@ -43,7 +43,7 @@ class MockBluetoothRepository: BluetoothRepository {
         Empty().eraseToAnyPublisher()
     }
     
-    func saveData(_ healthData: HealthData) async -> Result<Void, BluetoothScanningError> {
+    func saveData(_ healthData: HealthData) async -> Result<Void, BluetoothCollectionError> {
         .success(())
     }
 }

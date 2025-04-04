@@ -14,6 +14,7 @@ final class AppDIContainer {
     let userDetailsService: UserDetailsService
     let bluetoothScanningService: BluetoothScanningService
     let bluetoothConnectionService: BluetoothConnectionService
+    let historyDatabase: HistoryDatabase
 
     // MARK: - Repositories
     let userDetailsRepository: UserDetailsRepository
@@ -22,11 +23,13 @@ final class AppDIContainer {
     init() {
         // Bluetooth delegate handler
         let delegateHandler = BluetoothDelegateHandler()
+        let context = PersistenceController.shared.container.viewContext
         
         // Initialize services
         self.userDetailsService = UserDetailsServiceImpl()
         self.bluetoothScanningService = BluetoothScanningServiceImpl(delegateHandler: delegateHandler)
         self.bluetoothConnectionService = BluetoothConnectionServiceImpl(delegateHandler: delegateHandler)
+        self.historyDatabase = CoreDataHistoryDatabase(context: context)
         
         // Initialize repositories
         self.userDetailsRepository = UserDetailsRepositoryImpl(
@@ -35,7 +38,8 @@ final class AppDIContainer {
         
         self.bluetoothRepository = BluetoothRepositoryImpl(
             scanningService: bluetoothScanningService,
-            connectionService: bluetoothConnectionService
+            connectionService: bluetoothConnectionService,
+            historyDatabase: historyDatabase
         )
     }
 }
