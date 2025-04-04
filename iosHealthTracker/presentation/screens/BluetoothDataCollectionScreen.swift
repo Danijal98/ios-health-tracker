@@ -2,60 +2,84 @@ import SwiftUI
 
 struct BluetoothDataCollectionScreen: View {
     
-    @ObservedObject private var viewModel: BluetoothCollectionViewModel = BluetoothCollectionViewModel()
+    @StateObject private var viewModel: BluetoothCollectionViewModel
     @ObservedObject var bluetoothManager = BluetoothManager()
+    
     @State private var showSaveAlert = false
     @State private var showUnsuccessfulSaveAlert = false
     
     let deviceAddress: String
     
-    let sampleCollectedData = HealthData(id: 0, heartRate: 100, oxygenSaturation: 100, createdTime: nil)
+    init(repository: BluetoothRepository, deviceAddress: String) {
+        _viewModel = StateObject(wrappedValue: BluetoothCollectionViewModel(repository: repository))
+        self.deviceAddress = deviceAddress
+    }
     
     var body: some View {
         VStack {
             if bluetoothManager.isBluetoothEnabled {
-                DataCollectedCard(
-                    data: sampleCollectedData,
-                    isSaving: false,
-                    onSave: { data in
-                        
+                if let error = viewModel.state.error {
+                    switch error {
+                    case .collectingError:
+                        UnknownErrorState(text: "Error collecting data") {
+                            viewModel.onEvent(.collectData(deviceAddress: deviceAddress))
+                        }
+                    case .savingError:
+                        EmptyView()
                     }
-                )
-                
-                Spacer()
-                
-                LoaderButton(
-                    text: "Collect data",
-                    isLoading: false,
-                    fullWidth: true,
-                    onClick: {}
-                )
+                } else {
+                    if let data = viewModel.state.collectedData {
+                        DataCollectedCard(
+                            data: data,
+                            isSaving: viewModel.state.isSaving,
+                            onSave: { data in
+                                viewModel.onEvent(.saveData(healthData: data))
+                            }
+                        )
+                    }
+                    
+                    Spacer()
+                    
+                    LoaderButton(
+                        text: "Collect Data",
+                        isLoading: viewModel.state.isCollecting,
+                        fullWidth: true,
+                        onClick: {
+                            viewModel.onEvent(.collectData(deviceAddress: deviceAddress))
+                        }
+                    )
+                }
             } else {
                 EnableBluetoothPromptView()
             }
         }
         .padding()
         .alert("Success", isPresented: $showSaveAlert) {
-            Button("Ok", role: .cancel) { }
+            Button("OK", role: .cancel) { }
         } message: {
-            Text("Successfully saved")
+            Text("Data saved successfully.")
         }
-        .alert("Failiure", isPresented: $showUnsuccessfulSaveAlert) {
-            Button("Ok", role: .cancel) { }
+        .alert("Failure", isPresented: $showUnsuccessfulSaveAlert) {
+            Button("OK", role: .cancel) { }
         } message: {
-            Text("Save failed")
+            Text("Failed to save data.")
         }
-        .onAppear {
-            _ = bluetoothManager
+        .onReceive(viewModel.uiEvents) { event in
+            switch event {
+            case .saveSuccessful:
+                showSaveAlert = true
+            case .saveUnsuccessful:
+                showUnsuccessfulSaveAlert = true
+            }
         }
-        .onDisappear {
-            
-        }
-        .navigationTitle("Data collect")
+        .navigationTitle("Device: \(deviceAddress)")
         .navigationBarTitleDisplayMode(.inline)
     }
 }
 
 #Preview {
-    BluetoothDataCollectionScreen(deviceAddress: "123:1312:12412:42413")
+    BluetoothDataCollectionScreen(
+        repository: MockBluetoothRepository(),
+        deviceAddress: "123:1312:12412:42413"
+    )
 }

@@ -13,6 +13,7 @@ final class AppDIContainer {
     // MARK: - Services
     let userDetailsService: UserDetailsService
     let bluetoothScanningService: BluetoothScanningService
+    let bluetoothConnectionService: BluetoothConnectionService
 
     // MARK: - Repositories
     let userDetailsRepository: UserDetailsRepository
@@ -25,12 +26,16 @@ final class AppDIContainer {
         // Initialize services
         self.userDetailsService = UserDetailsServiceImpl()
         self.bluetoothScanningService = BluetoothScanningServiceImpl(delegateHandler: delegateHandler)
+        self.bluetoothConnectionService = BluetoothConnectionServiceImpl(delegateHandler: delegateHandler)
         
         // Initialize repositories
         self.userDetailsRepository = UserDetailsRepositoryImpl(
             userDetailsService: userDetailsService
         )
         
-        self.bluetoothRepository = BluetoothRepositoryImpl(scanningService: bluetoothScanningService)
+        self.bluetoothRepository = BluetoothRepositoryImpl(
+            scanningService: bluetoothScanningService,
+            connectionService: bluetoothConnectionService
+        )
     }
 }

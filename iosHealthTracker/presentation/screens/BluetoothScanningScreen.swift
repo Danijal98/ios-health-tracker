@@ -2,10 +2,13 @@ import SwiftUI
 
 struct BluetoothScanningScreen: View {
     
+    private let bluetoothRepository: BluetoothRepository
+    
     @StateObject private var viewModel: BluetoothScanningViewModel
     @ObservedObject private var bluetoothManager = BluetoothManager()
     
     init(repository: BluetoothRepository) {
+        self.bluetoothRepository = repository
         _viewModel = StateObject(wrappedValue: BluetoothScanningViewModel(bluetoothRepository: repository))
     }
     
@@ -24,7 +27,10 @@ struct BluetoothScanningScreen: View {
                         }
                     } else {
                         List(viewModel.state.scannedDevices) { device in
-                            NavigationLink(destination: BluetoothDataCollectionScreen(deviceAddress: device.address)) {
+                            NavigationLink(destination: BluetoothDataCollectionScreen(
+                                repository: self.bluetoothRepository,
+                                deviceAddress: device.address)
+                            ) {
                                 ScannedDeviceCard(device: device)
                             }
                             .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))

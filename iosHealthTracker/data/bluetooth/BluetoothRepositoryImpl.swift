@@ -12,24 +12,28 @@ import Combine
 final class BluetoothRepositoryImpl: BluetoothRepository {
     
     private let scanningService: BluetoothScanningService
+    private let connectionService: BluetoothConnectionService
     
-    init(scanningService: BluetoothScanningService) {
+    init(
+        scanningService: BluetoothScanningService,
+        connectionService: BluetoothConnectionService
+    ) {
         self.scanningService = scanningService
+        self.connectionService = connectionService
     }
     
     func startScanning() -> AnyPublisher<BluetoothDevice, Error> {
         scanningService.startScanning()
     }
-    
+
     func stopScanning() {
         scanningService.stopScanning()
     }
-    
-    // Other methods (connectAndReadData, saveData) will be implemented later
+
     func connectAndReadData(deviceAddress: String) -> AnyPublisher<HealthData, Error> {
-        Empty().eraseToAnyPublisher()
+        connectionService.connectAndReadData(deviceAddress: deviceAddress)
     }
-    
+
     func saveData(_ healthData: HealthData) async -> Result<Void, BluetoothScanningError> {
         .success(())
     }
