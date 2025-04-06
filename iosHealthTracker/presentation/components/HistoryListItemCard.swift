@@ -35,6 +35,6 @@ struct HistoryListItemCard: View {
 
 #Preview {
     HistoryListItemCard(healthData: HealthData(
-        id: 0, heartRate: 80, oxygenSaturation: 100, createdTime: "Today"
+        id: UUID(), heartRate: 80, oxygenSaturation: 100, createdTime: "Today"
     ))
 }

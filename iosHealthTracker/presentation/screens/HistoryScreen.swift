@@ -2,56 +2,77 @@ import SwiftUI
 
 struct HistoryScreen: View {
     
-    @ObservedObject private var viewModel: HistoryViewModel = HistoryViewModel()
-    @State private var showSaveAlert = false
+    @StateObject private var viewModel: HistoryViewModel
+    @State private var showClearedAlert = false
     
-    let sampleHealthData: [HealthData] = [
-        HealthData(id: 1, heartRate: 72, oxygenSaturation: 98, createdTime: "2024-04-03 10:15"),
-        HealthData(id: 2, heartRate: 78, oxygenSaturation: 96, createdTime: "2024-04-03 10:20"),
-        HealthData(id: 3, heartRate: 85, oxygenSaturation: 97, createdTime: "2024-04-03 10:25")
-    ]
+    init(historyRepository: HistoryRepository) {
+        _viewModel = StateObject(wrappedValue: HistoryViewModel(historyRepository: historyRepository))
+    }
     
     var body: some View {
         NavigationStack {
             ZStack {
-                List(sampleHealthData, id: \.id) { item in
-                    HistoryListItemCard(healthData: item)
-                        .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
-                        .listRowSeparator(.hidden)
+                if let error = viewModel.state.error {
+                    switch error {
+                    case .loadingError:
+                        DataLoadFailedState {
+                            viewModel.onEvent(.loadData)
+                        }
+                    case .defaultError:
+                        UnknownErrorState {
+                            viewModel.onEvent(.loadData)
+                        }
+                    default:
+                        EmptyView()
+                    }
+                } else if viewModel.state.isLoading {
+                    ProgressView()
+                } else if viewModel.state.historyList.isEmpty {
+                    NoDataState()
+                } else {
+                    List(viewModel.state.historyList, id: \.id) { item in
+                        HistoryListItemCard(healthData: item)
+                            .listRowInsets(EdgeInsets(top: 8, leading: 0, bottom: 8, trailing: 0))
+                            .listRowSeparator(.hidden)
+                    }
+                    .listStyle(.plain)
                 }
-                .listStyle(.plain)
             }
             .padding()
             .navigationTitle("History")
             .navigationBarTitleDisplayMode(.inline)
             .onAppear {
-                
-            }
-            .onDisappear {
-                
+                viewModel.onEvent(.loadData)
             }
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Menu {
                         Button(role: .destructive) {
-                            
+                            viewModel.onEvent(.clearHistory)
                         } label: {
-                            Label("Clear history", systemImage: "trash")
+                            Label("Clear History", systemImage: "trash")
                         }
                     } label: {
                         Image(systemName: "ellipsis")
                     }
                 }
             }
-            .alert("Success", isPresented: $showSaveAlert) {
-                Button("Ok", role: .cancel) { }
+            .alert("Success", isPresented: $showClearedAlert) {
+                Button("OK", role: .cancel) { }
             } message: {
-                Text("History cleared")
+                Text("History cleared successfully.")
+            }
+            .onReceive(viewModel.uiEvents) { event in
+                switch event {
+                case .historyClearedSuccessfully:
+                    showClearedAlert = true
+                }
             }
         }
     }
 }
 
+
 #Preview {
-    HistoryScreen()
+    HistoryScreen(historyRepository: MockHistoryRepository())
 }

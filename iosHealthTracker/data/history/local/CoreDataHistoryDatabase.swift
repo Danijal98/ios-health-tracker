@@ -30,10 +30,13 @@ final class CoreDataHistoryDatabase: HistoryDatabase {
     func getAll() async throws -> [HealthData] {
         let request: NSFetchRequest<HealthDataEntity> = HealthDataEntity.fetchRequest()
         let results = try context.fetch(request)
+        
         return results.map {
             HealthData(
+                id: $0.id,
                 heartRate: Int($0.heartRate),
-                oxygenSaturation: Int($0.oxygenSaturation)
+                oxygenSaturation: Int($0.oxygenSaturation),
+                createdTime: $0.timestamp!.toLocalString() // It is always set
             )
         }
     }

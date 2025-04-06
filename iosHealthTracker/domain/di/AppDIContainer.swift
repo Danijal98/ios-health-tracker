@@ -19,6 +19,7 @@ final class AppDIContainer {
     // MARK: - Repositories
     let userDetailsRepository: UserDetailsRepository
     let bluetoothRepository: BluetoothRepository
+    let historyRepository: HistoryRepositoryImpl
     
     init() {
         // Bluetooth delegate handler
@@ -41,5 +42,7 @@ final class AppDIContainer {
             connectionService: bluetoothConnectionService,
             historyDatabase: historyDatabase
         )
+        
+        self.historyRepository = HistoryRepositoryImpl(historyDatabase: self.historyDatabase)
     }
 }

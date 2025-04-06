@@ -22,7 +22,7 @@ struct ContentView: View {
             }
             
             Tab("History", systemImage: "list.bullet") {
-                HistoryScreen()
+                HistoryScreen(historyRepository: container.historyRepository)
             }
             
             Tab("Settings", systemImage: "gearshape") {

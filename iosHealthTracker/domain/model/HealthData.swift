@@ -8,7 +8,7 @@
 import Foundation
 
 struct HealthData: Identifiable, Codable {
-    var id: Int64?
+    var id: UUID?
     var heartRate: Int?
     var oxygenSaturation: Int?
     var createdTime: String?
