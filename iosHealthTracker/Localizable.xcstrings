@@ -1,0 +1,124 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%" : {
+      "extractionState" : "manual"
+    },
+    "Address: %@" : {
+
+    },
+    "Average: %lld%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Average: %1$lld%2$@"
+          }
+        }
+      }
+    },
+    "Bluetooth" : {
+
+    },
+    "Bluetooth Scanning" : {
+
+    },
+    "Bluetooth turned off" : {
+
+    },
+    "bpm" : {
+      "extractionState" : "manual"
+    },
+    "Clear History" : {
+
+    },
+    "Data saved successfully." : {
+
+    },
+    "Device: %@" : {
+
+    },
+    "Failed to save data." : {
+
+    },
+    "Failed to scan for devices." : {
+
+    },
+    "Failure" : {
+
+    },
+    "Heart rate" : {
+      "extractionState" : "manual"
+    },
+    "Heart rate: %@" : {
+
+    },
+    "History" : {
+
+    },
+    "History cleared successfully." : {
+
+    },
+    "Home" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Home"
+          }
+        }
+      }
+    },
+    "Min: %lld%@ | Max: %lld%@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "Min: %1$lld%2$@ | Max: %3$lld%4$@"
+          }
+        }
+      }
+    },
+    "Name: %@" : {
+
+    },
+    "OK" : {
+
+    },
+    "Oxygen saturation" : {
+      "extractionState" : "manual"
+    },
+    "Oxygen saturation value: %@" : {
+
+    },
+    "Oxygen saturation: %@" : {
+
+    },
+    "Recorded data: %@" : {
+
+    },
+    "Retry" : {
+
+    },
+    "Settings" : {
+
+    },
+    "Start Scanning" : {
+
+    },
+    "Stop Scanning" : {
+
+    },
+    "Success" : {
+
+    },
+    "Turn on bluetooth" : {
+
+    },
+    "Unknown error occurred." : {
+
+    }
+  },
+  "version" : "1.0"
+}
